@@ -39,7 +39,7 @@ sub new {
   my ($class, $args) = @_;
   my $self =  {
       logfile => $args->{logfile} || '',
-      log2stdout => $args->{log2stdout} || 1,
+      log2stdout => ($args->{log2stdout}) ? 1 : 0,
       log2file => ($args->{logfile}) ? 1 : 0,
       debug => $args->{debug} || 0
   };
@@ -64,29 +64,29 @@ my $get_module = sub {
 };
 
 my $log_msg = sub {
-  my ($facility, $msg, $fh) = @_;
-  printf STDOUT "%s %s %s : %s\n", &$get_timestamp, &$get_module, $facility, $msg;
+  my ($facility, $msg, $fh, $log2stdout) = @_;
+  printf STDOUT "%s %s %s : %s\n", &$get_timestamp, &$get_module, $facility, $msg if $log2stdout;
   printf $fh "%s %s %s : %s\n", &$get_timestamp, &$get_module, $facility, $msg if $fh;
 };
 
 sub LogInfo {
   my ($self,$msg) = @_;
-  &$log_msg('INFO', $msg, $self->{logfile_fh});
+  &$log_msg('INFO', $msg, $self->{logfile_fh}, $self->{log2stdout});
 }
 
 sub LogWarrn {
   my ($self,$msg) = @_;
-  &$log_msg('WARN', $msg, $self->{logfile_fh});
+  &$log_msg('WARN', $msg, $self->{logfile_fh}, $self->{log2stdout});
 }
 
 sub LogError {
   my ($self,$msg) = @_;
-  &$log_msg('ERROR', $msg, $self->{logfile_fh});
+  &$log_msg('ERROR', $msg, $self->{logfile_fh}, $self->{log2stdout});
 }
 
 sub LogDebug {
   my ($self,$msg) = @_;
-  &$log_msg('DEBUG', $msg, $self->{logfile_fh}) if $self->{debug};
+  &$log_msg('DEBUG', $msg, $self->{logfile_fh}, $self->{log2stdout}) if $self->{debug};
 }
 
 =pod
