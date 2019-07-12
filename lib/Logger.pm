@@ -3,6 +3,32 @@
 
 package Logger;
 
+=pod
+
+=head1 NAME
+
+Logger.pm
+
+=head1 SYNOPSIS
+
+	use Logger;
+	my $log = Logger->new({
+		logfile => 'output.log',
+		log2stdout => 1,
+		debug => 1
+	});
+	
+	$log->LogInfo('Information message ... ');
+	$log->LogWarrn('Warning message ... ');
+	$log->LogError('ERROR message ...');
+	$log->LogDebug('DEBUGGING message ... ');
+
+=head1 DESCRIPTION
+
+Logging module which brings feature to consistent logging to *STDOUT as well as into specified file. If debug => 0 is in place LogDebug function will be ignored.
+
+=cut
+
 use warnings;
 use strict;
 use File::Basename;
@@ -33,7 +59,8 @@ my $get_timestamp = sub {
 };
 
 my $get_module = sub {
-  return basename($0);
+	my $callback = (caller)[3];
+	return ($callback) ? $callback : basename($0); 
 };
 
 my $log_msg = sub {
@@ -47,7 +74,7 @@ sub LogInfo {
   &$log_msg('INFO', $msg, $self->{logfile_fh});
 }
 
-sub LogWarn {
+sub LogWarrn {
   my ($self,$msg) = @_;
   &$log_msg('WARN', $msg, $self->{logfile_fh});
 }
@@ -61,5 +88,13 @@ sub LogDebug {
   my ($self,$msg) = @_;
   &$log_msg('DEBUG', $msg, $self->{logfile_fh}) if $self->{debug};
 }
+
+=pod
+
+=head1 AUTHOR
+
+Written 2019 by Martin Sukany <martin@sukany.cz>
+
+=cut
 
 1;
